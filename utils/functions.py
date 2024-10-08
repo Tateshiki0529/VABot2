@@ -1,5 +1,5 @@
 from stringcolor import cs
-from discord import ApplicationContext
+from discord import ApplicationContext, Embed
 from datetime import datetime as dt, timezone as tz, timedelta as td
 
 class LOGLEVEL:
@@ -29,3 +29,8 @@ def log(message: str, log_level: int = LOGLEVEL.INFO) -> None:
 
 def is_owner(ctx: ApplicationContext) -> bool:
 	return ctx.interaction.user == ctx.interaction.guild.owner
+
+def addFields(embed: Embed, fields: list[tuple[str, str, bool]]) -> Embed:
+	for field in fields:
+		embed.add_field(name=field[0], value=field[1], inline=field[2])
+	return embed

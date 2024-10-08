@@ -1,14 +1,17 @@
 from discord import (
-	Cog, Bot, Intents, ApplicationContext
+	Cog, Bot, Intents, ApplicationContext, Embed
 )
 from discord import option
 from discord.ext.commands import slash_command as command
 from dotenv import load_dotenv
 from os import getenv
+from os.path import getmtime
 from emoji import emojize
+from datetime import datetime as dt, timezone as tz, timedelta as td
 
-from utils.functions import log, is_owner
+from utils.functions import log, is_owner, addFields
 from utils.autocomplete import AutoComplete
+from utils.version_manager import VersionInfo
 
 load_dotenv()
 
@@ -73,6 +76,60 @@ class VABot(Cog):
 		for cog in cogs:
 			self.bot.remove_cog(cog)
 		await self.bot.close()
+		return
+	
+	# Command: /version [version]
+	@command(
+		name = 'version',
+		description = 'Botのバージョン情報を返します [Module: Core]'
+	)
+	@option(
+		name = 'version',
+		type = str,
+		description = '参照するバージョン',
+		required = False,
+		autocomplete = AutoComplete.getVersion
+	)
+	async def __version(self, ctx: ApplicationContext, version: str = None) -> None:
+		versionInfo = VersionInfo()
+		if not version:
+			embed = Embed(
+				title='V.A.Bot Version %s' % versionInfo.latest_version,
+				color=0x91e3f9,
+				timestamp=dt.now().astimezone(tz(td(hours=9)))
+			)
+
+			embed.set_author(
+				name = getenv('BOT_NAME'),
+				icon_url = getenv('BOT_ICON_URL')
+			)
+
+			embed = addFields(embed=embed, fields=[
+				('バージョン', versionInfo.latest_version, True),
+				('最終更新日', dt.fromtimestamp(getmtime('./utils/version_manager.py')).astimezone(tz(td(hours=9))).strftime(getenv('DATETIME_FORMAT')), True),
+				('最新の更新内容', versionInfo.getVersion(), False)
+			])
+		else:
+			if version not in versionInfo.getVersions():
+				await ctx.respond('Error: 指定されたバージョンは存在しません！')
+				return
+			
+			embed = Embed(
+				title='V.A.Bot Version %s' % version,
+				color=0x91e3f9,
+				timestamp=dt.now().astimezone(tz(td(hours=9)))
+			)
+			embed.set_author(
+				name = getenv('BOT_NAME'),
+				icon_url = getenv('BOT_ICON_URL')
+			)
+			embed = addFields(embed=embed, fields=[
+				('バージョン', version, True),
+				('更新内容', versionInfo.getVersion(version=version), False)
+			])
+		embed.set_footer(text='%s@%s issued: /version' % (ctx.author.display_name, ctx.author.name), icon_url=ctx.author.display_avatar.url)
+
+		await ctx.respond(embed=embed)
 		return
 	
 if __name__ == '__main__':
