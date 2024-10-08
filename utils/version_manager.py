@@ -1,6 +1,12 @@
 class VersionInfo:
 	def __init__(self) -> None:
 		self.version_text: dict[str, str] = {
+			'5.2.0': '''以下の機能を実装しました:
+・`Utils`拡張機能
+　- 新しいコマンドの実装
+　　- `/ping` コマンド
+　　- `/server` コマンド
+''',
 			'5.1.0': '''以下の機能を実装しました:
 ・`Core`モジュール
 　- 新しいコマンドの実装

@@ -20,6 +20,7 @@ class VABot(Cog):
 		super().__init__()
 		self.bot: Bot = bot
 		log('[Core] Loading extensions...')
+		bot.load_extension('extensions.utils')
 		log('[Core] All extensions loaded!')
 		return
 	
