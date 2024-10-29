@@ -1,7 +1,6 @@
 from discord import (
 	Cog, Bot, ApplicationContext, Interaction
 )
-from discord import option
 from discord.ext.commands import slash_command as command
 from psutil import cpu_freq, virtual_memory, disk_usage, cpu_count, cpu_percent
 from cpuinfo import get_cpu_info

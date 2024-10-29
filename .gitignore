@@ -4,3 +4,9 @@
 # Debug file
 *.pyc
 __pycache__/
+
+# Test file
+tests/
+
+# System file
+# cp-list.json
